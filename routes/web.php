@@ -19,4 +19,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/lojista', 'HomeController@index')->name('home');
+Route::get('/cadastrar', 'EstabelecimentoController@create')->name('cadastrar_estabelecimento');
+
+Route::resource('estabelecimento', 'EstabelecimentoController');

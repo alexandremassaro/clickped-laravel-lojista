@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use phpDocumentor\Reflection\Types\Nullable;
 
 class CreateEstabelecimentosTable extends Migration
 {
@@ -18,7 +19,7 @@ class CreateEstabelecimentosTable extends Migration
             $table->string('razao_social');
             $table->string('nome_fantasia');
             $table->string('cnpj')->unique();
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
