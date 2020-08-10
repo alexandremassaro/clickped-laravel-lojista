@@ -13,7 +13,7 @@
 
     <div class="row">
         <div class="col col-xl-4 py-2">
-            <a href="" class="btn p-0 text-primary">
+            <a href="{{ route('cadastrar_estabelecimento') }}" class="btn p-0 text-primary">
                 <div class="card btn-light" style="width: 18rem; height: 10rem;">  
                     <div class="card-body align-middle">
                         <h1 class="card-title text-center">+</h1>
@@ -25,7 +25,7 @@
         
         @foreach($estabelecimentos as $estabelecimento)
         <div class="col col-xl-4 py-2">
-            <a href="" class="btn p-0">
+            <a href="/lojista/{{ Auth::user()->id }}/{{ $estabelecimento->slug }}" class="btn p-0">
                 <div class="card btn-light" style="width: 18rem; height: 10rem;">
                     <div style="height: 100px;" class="justify-content-center text-center">
                         <img class="card-img-top img-fluid mh-100 w-auto" src="/images/logo_ver_dark_500.png" alt="Logo Estabelecimento">

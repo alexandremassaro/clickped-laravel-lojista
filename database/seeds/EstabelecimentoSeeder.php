@@ -12,9 +12,13 @@ class EstabelecimentoSeeder extends Seeder
      */
     public function run()
     {
+        
+        factory(Estabelecimento::class)->create();
         factory(Estabelecimento::class)->create();
 
         $estabelecimento = \App\Estabelecimento::find(1);
         $estabelecimento->attachUser(1);
+        $estabelecimento = \App\Estabelecimento::find(2);
+        $estabelecimento->attachUser(3);
     }
 }

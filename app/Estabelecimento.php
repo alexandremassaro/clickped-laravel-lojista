@@ -12,6 +12,10 @@ class Estabelecimento extends Model
         return $this->belongsToMany(User::class)->withTimestamps();
     }
 
+    public function mesas() {
+        return $this->hasMany(Mesa::class);
+    }
+
     public function attachUser($user) {
         $this->users()->syncWithoutDetaching([$user]);
     }

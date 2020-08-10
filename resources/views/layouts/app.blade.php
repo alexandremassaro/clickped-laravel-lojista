@@ -61,7 +61,7 @@
                                         email@cliente.com
                                     </div>
                                     <hr/>
-                                    <a class="dropdown-item jutify-content-center text-center" href="">
+                                    <a class="dropdown-item jutify-content-center text-center" href="{{ route('home') }}">
                                         Meus estabelecimentos
                                     </a>
                                     <hr/>

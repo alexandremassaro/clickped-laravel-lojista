@@ -19,7 +19,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/lojista', 'HomeController@index')->name('home');
+Route::get('/lojista', 'EstabelecimentoController@index')->name('home');
 Route::get('/cadastrar', 'EstabelecimentoController@create')->name('cadastrar_estabelecimento');
-
-Route::resource('estabelecimento', 'EstabelecimentoController');
+Route::post('/cadastrar', 'EstabelecimentoController@store')->name('cadastrar_estabelecimento');
+Route::get('/lojista/{user}/{estabelecimento:slug}', 'EstabelecimentoController@show');
+Route::get('/estabelecimento/{estabelecimento:slug}/mesas', 'MesaController@index');
+Route::post('/mesas', 'MesaController@store');

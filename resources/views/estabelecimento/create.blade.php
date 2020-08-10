@@ -9,7 +9,7 @@
 
                 <div class="card-body">
 
-                    <form action=" {{ route('estabelecimento.store') }} " method="post" enctype="multipart/form-data">
+                    <form action=" {{ route('cadastrar_estabelecimento') }} " method="post" enctype="multipart/form-data">
                         @csrf
 
                         
@@ -29,7 +29,7 @@
                             <label for="cpf">CNPJ</label>
                             <input type="text" name="cnpj" value="{{ old('cnpj') ?? $estabelecimento->cnpj }}" class="form-control">
                         </div>
-                        <div class="pb-3">{{ $errors->first('cpf') }}</div>
+                        <div class="pb-3">{{ $errors->first('cnpj') }}</div>
                         
                         <button type="submit" class="btn btn-primary">Cadastrar</button>
                     </form>

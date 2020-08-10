@@ -18,6 +18,8 @@ class CreateEstabelecimentosTable extends Migration
             $table->id();
             $table->string('razao_social');
             $table->string('nome_fantasia');
+            $table->string('apelido')->nullable();
+            $table->string('slug')->unique()->nullable();
             $table->string('cnpj')->unique();
             $table->string('image')->nullable();
             $table->timestamps();

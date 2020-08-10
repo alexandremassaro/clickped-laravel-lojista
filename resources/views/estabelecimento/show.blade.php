@@ -2,53 +2,70 @@
 
 @section('content')
 <div class="container">
+    @include('estabelecimento.layouts.nav.nav')
     <div class="row justify-content-center">
-        <div class="col-2">
-            <nav class="navbar navbar-expand-md navbar-light py-4">
-                
-                <button class="navbar-toggler bg-white " type="button" data-toggle="collapse" data-target="#appMenuContent" aria-controls="appMenuContent" aria-expanded="false" aria-label="Menu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse bg-white shadow-sm rounded border px-2"  id="appMenuContent">
-                    <ul class="nav flex-column navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#">Pedidos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" data-toggle="collapse" href="#menuCadastro" aria-expanded="false" aria-controls="menuCadastro">Cadastros</a>
-                            <div class="collapse" id="menuCadastro">
-                                <ul class="nav flex-column navbar-nav">
-                                    <li class="nav-item pl-3 hover-focus">
-                                        <a class="nav-link active" href="#">Mesas</a>
-                                    </li>
-                                    <li class="nav-item pl-3 hover-focus">
-                                        <a class="nav-link active" href="#">Cardápio</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#">Dados do restaurante</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-        <div class="col-md-10">
+        <div class="col py-4">
             <div class="card">
-                <div class="card-header">Bem-vindo à área do lojista</div>
+                <div class="card-header navbar">
+                    <div class="row w-100 justify-content-between">
+                        <div class="col-md-5">
+                            <div class="h4 p-0 m-0">
+                                Pedidos Recentes
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-control form-control-sm">
+                                <option>Mostrar todos</option>
+                                <option>Pendentes</option>
+                                <option>Preparando</option>
+                                <option>Entregando</option>
+                                <option>Finalizados</option>
+                              </select>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
+                    
+                    <div class="row justify-content-center">
+                        <div class="col">
+                            <table class="table table-hover">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Número</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Mesa</th>
+                                    <th scope="col">Cliente</th>
+                                    <th scope="col">Pedido</th>
+                                    <th scope="col">Quantidade</th>
+                                    <th scope="col">Exibir</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                    @for($i = 0; $i < 10; $i++)
+                                        <tr>
+                                            <th scope="row">{{ $i+1 }}</th>
+                                            <td>Pendente</td>
+                                            <td>05</td>
+                                            <td>João da SilvaJoão da SilvaJoão da SilvaJoão da SilvaJoão da SilvaJoão da SilvaJoão da SilvaJoão da SilvaJoão da Silva</td>
+                                            <td>Heineken 600ml</td>
+                                            <td>2</td>
+                                            <td>
+                                                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample_{{ $i }}" aria-expanded="false" aria-controls="collapseExample_{{ $i }}">
+                                                    Ver
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr class="collapse" id="collapseExample_{{ $i }}">
+                                            <td>
+                                                Anim
+                                            </td>
+                                        </tr>
+                                    @endfor
+                                </tbody>
+                            </table>
                         </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
+                    </div>
                 </div>
             </div>
         </div>
