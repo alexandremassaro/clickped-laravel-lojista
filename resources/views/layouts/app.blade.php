@@ -18,6 +18,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    
 </head>
 <body>
     <div id="app">
@@ -50,25 +51,31 @@
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <div class="jutify-content-center text-center py-4">
+                                <div class="dropdown-menu dropdown-menu-right" style="width: 15rem" aria-labelledby="navbarDropdown">
+                                    <div class=" justify-content-between text-center py-4">
                                         <img src="/images/logo_ver_dark_150.png" alt="Foto do cliente" class="rounded-circle">
                                     </div>
-                                    <div class="jutify-content-center text-center font-weight-bold">
+                                    <div class=" justify-content-between text-center font-weight-bold">
                                         <h4>Nome do cliente</h4>
                                     </div>
-                                    <div class="jutify-content-center text-center font-weight-bold">
+                                    <div class=" justify-content-between text-center font-weight-bold">
                                         email@cliente.com
                                     </div>
                                     <hr/>
-                                    <a class="dropdown-item jutify-content-center text-center" href="{{ route('home') }}">
-                                        Meus estabelecimentos
+                                    <a class="dropdown-item  justify-content-between text-center" href="{{ route('home') }}">
+                                        <div class="row">
+                                            <div class="col-1"><i class="fas fa-list-ul"></i></div>
+                                            <div class="col text-left">Meus estabelecimentos</div>
+                                        </div>
                                     </a>
                                     <hr/>
-                                    <a class="dropdown-item jutify-content-center text-center" href="{{ route('logout') }}"
+                                    <a class="dropdown-item justify-content-between w-100" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        Sair
+                                                     <div class="row">
+                                                         <div class="col-1"><i class="fas fa-sign-out-alt"></i></div>
+                                                         <div class="col text-left">Sair</div>
+                                                     </div>
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

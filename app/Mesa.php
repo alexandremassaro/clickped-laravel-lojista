@@ -9,6 +9,6 @@ class Mesa extends Model
     protected $guarded = [];
     
     public function estabelecimento() {
-        $this->belongsTo(Estabelecimento::class);
+        return $this->belongsTo(Estabelecimento::class);
     }
 }

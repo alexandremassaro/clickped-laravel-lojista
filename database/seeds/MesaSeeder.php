@@ -14,7 +14,7 @@ class MesaSeeder extends Seeder
     {
         for ($i = 0; $i < 5; $i++){
             factory(Mesa::class)->create([
-                'nome' => 'Mesa ' . $i
+                'nome' => 'Mesa ' . $i,
             ]);
         }
     }

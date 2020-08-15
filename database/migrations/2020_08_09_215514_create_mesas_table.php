@@ -17,6 +17,7 @@ class CreateMesasTable extends Migration
             $table->id();
             $table->foreignId('estabelecimento_id');
             $table->string('nome');
+            $table->integer('status')->default(0);
             $table->timestamps();
         });
     }

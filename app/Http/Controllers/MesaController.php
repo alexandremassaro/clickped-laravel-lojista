@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Estabelecimento;
 use App\Mesa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MesaController extends Controller
 {
@@ -25,7 +26,8 @@ class MesaController extends Controller
      */
     public function index(Estabelecimento $estabelecimento)
     {
-        $mesas = $estabelecimento->mesas;
+        $mesas = Mesa::where('estabelecimento_id', $estabelecimento->id)->orderBy('id', 'desc')->paginate(10);
+        //$mesas = $estabelecimento->mesas->sortDesc()->paginate(10);
             
         return view('estabelecimento.mesa.index', compact('mesas', 'estabelecimento'));
     }
@@ -46,9 +48,18 @@ class MesaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Estabelecimento $estabelecimento, Request $request)
     {
-        //
+        $this->validateRequest();
+        $mesa = new Mesa();
+        $mesa->nome = $request->input('nome');
+        $mesa->estabelecimento_id = $estabelecimento->id;
+
+        foreach (Auth::user()->estabelecimentos as $user_estabelecimento)
+            if ($user_estabelecimento->id == $estabelecimento->id)
+                $mesa->save();
+        
+        return redirect(route('mesas_index', compact(['estabelecimento'])));
     }
 
     /**
@@ -80,9 +91,11 @@ class MesaController extends Controller
      * @param  \App\Mesa  $mesa
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Mesa $mesa)
+    public function update(Estabelecimento $estabelecimento, Request $request, Mesa $mesa)
     {
-        //
+        $mesa->update($this->validateRequest());
+
+        return redirect(route('mesas_index', compact(['estabelecimento'])));
     }
 
     /**
@@ -91,8 +104,19 @@ class MesaController extends Controller
      * @param  \App\Mesa  $mesa
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Mesa $mesa)
+    public function destroy(Estabelecimento $estabelecimento, Mesa $mesa)
     {
-        //
+        foreach (Auth::user()->estabelecimentos as $user_estabelecimento)
+            if ($user_estabelecimento->id == $estabelecimento->id)
+                $mesa->delete();
+        
+        return redirect(route('mesas_index', compact(['estabelecimento'])));
+    }
+
+    public function validateRequest() {
+
+        return request()->validate([
+            'nome' => 'required|min:3'
+        ]);
     }
 }

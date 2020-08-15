@@ -9,5 +9,6 @@ $factory->define(Mesa::class, function (Faker $faker) {
     return [
         'estabelecimento_id' => 1,
         'nome' => 'Mesa 1',
+        'status' => 1,
     ];
 });

@@ -17,6 +17,7 @@ class CreateCardapiosTable extends Migration
             $table->id();
             $table->foreignId('estabelecimento_id');
             $table->string('nome');
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

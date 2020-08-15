@@ -16,7 +16,20 @@ class Estabelecimento extends Model
         return $this->hasMany(Mesa::class);
     }
 
+    public function cardapios() {
+        return $this->hasMany(Cardapio::class);
+    }
+
+    public function categorias() {
+        return $this->hasMany(Categoria::class);
+    }
+
+    public function items() {
+        return $this->hasMany(Item::class);
+    }
+
     public function attachUser($user) {
         $this->users()->syncWithoutDetaching([$user]);
     }
+
 }

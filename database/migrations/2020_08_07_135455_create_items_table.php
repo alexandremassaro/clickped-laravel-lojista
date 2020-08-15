@@ -15,11 +15,12 @@ class CreateItemsTable extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cardapio_id');
             $table->string('nome');
             $table->longText('descricao');
             $table->double('preco', 8, 2);
-            $table->string('image');
+            $table->string('image')->nullable();
+            $table->integer('status')->default(0);
+            $table->foreignId('estabelecimento_id');
             $table->timestamps();
         });
     }

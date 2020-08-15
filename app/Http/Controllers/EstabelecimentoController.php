@@ -36,7 +36,7 @@ class EstabelecimentoController extends Controller
             elseif ($role->id == 3) $client = true;
 
         if ($client && !$lojista)
-            return redirect('estabelecimento/create');        
+            return redirect('cadastrar');        
 
             
         $this->authorize('viewAny', Estabelecimento::class);
