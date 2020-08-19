@@ -14,24 +14,38 @@
         </div>
     </div>
 
-        
-        @for($i = 0; $i < $cardapio->selecaos->count(); $i++)
-            @if ($i == 0 || $selecaos[$i]->categoria->id != $cardapio->selecaos->sortBy('categoria')[$i-1]->categoria->id)
+        @php
+            $lastSelecao = null;
+        @endphp
+
+        @foreach($selecaos as $selecao)
+            @if ($loop->first || $selecao->categoria->id != $lastSelecao->categoria->id)
+                @if(!$loop->first)
+                    </ul>
+                @endif
+                <item-select-component 
+                    id="selecionaItemModal{{ $selecao->categoria->id }}" 
+                    form_action="{{ route('cardapios_select_item', ['estabelecimento' => $estabelecimento, 'cardapio' => $cardapio, 'categoria' => $selecao->categoria]) }}"
+                    csrf_token="{{ csrf_token() }}"
+                    estabelecimento="{{ $estabelecimento->slug }}"
+                    cardapio="{{ $cardapio->id }}"
+                    categoria="{{ $selecao->categoria->id }}">
+                </item-select-component>
         
                 <div class="row pt-4 px-lg-1 px-md-2 px-sm-1">
                     <div class="col">
                         <h3>
-                            {{ $selecaos[$i]->categoria->nome }}
+                            {{ $selecao->categoria->nome }}
                         </h3>
                     </div>
                     <div class="col-lg-2 col-3 text-lg-center text-sm-right">
-                        <button type="button" class="btn btn-outline-dark m-0 py-0 px-1" title="Adicionar item">
+                        <button type="button" class="btn btn-outline-dark m-0 py-0 px-1" title="Adicionar item" data-toggle="modal" data-target="#selecionaItemModal{{ $selecao->categoria->id }}">
                             <i class="fas fa-plus"></i>
                         </button> 
 
-                        <a type="submit" class="btn btn-outline-danger m-0 py-0 px-1" title="Remover categoria e todos os ítens contidos nela" onclick="event.preventDefault();
-                        document.getElementById('delete-form{{ $selecaos[$i]->categoria->id }}').submit();"><i class="far fa-trash-alt"></i></a>
-                        <form id="delete-form{{ $selecaos[$i]->categoria->id }}" action="{{ route('cardapios_delete_categoria', ['cardapio' => $cardapio, 'categoria' => $selecaos[$i]->categoria->id]) }}" method="POST" style="display: none;">
+                        <a type="submit" class="btn btn-outline-danger m-0 py-0 px-1" title="Remover categoria" onclick="event.preventDefault();
+                        document.getElementById('delete-categoria-form{{ $selecao->categoria->id }}').submit();"><i class="far fa-trash-alt"></i></a>
+                        <form id="delete-categoria-form{{ $selecao->categoria->id }}" action="{{ route('cardapios_delete_categoria', ['cardapio' => $cardapio, 'categoria' => $selecao->categoria->id]) }}" method="POST" style="display: none;">
                             @method('delete')
                             @csrf
                         </form> 
@@ -40,26 +54,31 @@
                 
                 <ul class="list-group list-group-flush">
             @endif
-            @if ($selecaos[$i]->item_id != null)
+            @if ($selecao->item_id)
                 <li class="list-group-item">
                     <div class="row pl-2">
                         <div class="col">
-                            {{ $selecaos[$i]->item->nome }}
+                            {{ $selecao->item->nome ?? '' }}
                         </div>
                         <div class="col-1 text-left">
-                            <button type="button" class="btn btn-outline-danger m-0 py-0 px-1" title="Remover ítem">
+                            <button type="button" class="btn btn-outline-danger m-0 py-0 px-1" title="Remover ítem" onclick="document.getElementById('delete-item{{ $selecao->item->id }}-categoria{{$selecao->categoria->id}}-form').submit();">
                                 <i class="far fa-trash-alt"></i>
                             </button>
+                            <form id="delete-item{{ $selecao->item->id }}-categoria{{$selecao->categoria->id}}-form" action="{{ route('cardapios_delete_item', ['cardapio' => $cardapio, 'categoria' => $selecao->categoria->id, 'item' => $selecao->item->id]) }}" method="POST" style="display: none;">
+                                @method('delete')
+                                @csrf
+                            </form> 
                         </div>
                     </div>
                 </li>   
             @endif
-            @if ($i == $cardapio->selecaos->count() - 1 || $selecaos[$i]->categoria->id != $cardapio->selecaos->sortBy('categoria')[$i+1]->categoria->id)                             
+            @if ($loop->last)                             
                 </ul>
             @endif
-        @endfor
-        
-    
+            @php
+                $lastSelecao = $selecao;
+            @endphp
+        @endforeach
 </div>
 
 <!-- Add categoria Modal -->
@@ -77,7 +96,7 @@
                     @csrf
                     <div class="form-group">
                         <label for="nome" class="col-form-label">Nome da categoria:</label>
-                        <input type="text" class="form-control" id="nome" name="nome">
+                        <auto-complete-categoria estabelecimento="{{ $estabelecimento->slug }}" cardapio="{{ $cardapio->id }}"></auto-complete-categoria>
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -51,7 +51,7 @@ class CategoriaController extends Controller
         $categoria = Categoria::firstOrNew([
             'estabelecimento_id' => $estabelecimento->id,
             'nome' => $request->input('nome'),
-            ]);
+        ]);
         $categoria->status = 0;
         
         foreach (Auth::user()->estabelecimentos as $user_estabelecimento)
@@ -108,8 +108,11 @@ class CategoriaController extends Controller
         $categoria->status = 1;
         
         foreach (Auth::user()->estabelecimentos as $user_estabelecimento)
-            if ($user_estabelecimento->id == $estabelecimento->id)
+            if ($user_estabelecimento->id == $estabelecimento->id){
+                foreach($categoria->selecaos as $selecao)
+                    $selecao->delete();
                 $categoria->save();
+            }
         
         return redirect(route('categorias_index', compact(['estabelecimento'])));
     }

@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Complemento;
 use App\Estabelecimento;
-use App\Item;
 use App\Opcao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class ComplementoController extends Controller
+class OpcaoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -39,34 +38,24 @@ class ComplementoController extends Controller
      */
     public function store(Request $request)
     {
-        $item = Item::find($request->item);
+        $complemento = Complemento::find($request->complemento);
         $estabelecimento = Estabelecimento::where(['slug' => $request->estabelecimento])->first();
 
-        if(!$item || !$estabelecimento)
+        if(!$complemento || !$estabelecimento)
             return response()->json([
                 'message' => 'Registro não encontrado',
             ], 404);
 
-        $complemento = Complemento::create([
-            'item_id' => $request->item,
+        $opcao = Opcao::create([
+            'complemento_id' => $request->complemento,
             'nome' => $request->nome,
-            'min' => $request->min,
-            'max' => $request->max,
+            'preco' => $request->preco,
         ]);
 
-        if(!$complemento)
+        if(!$opcao)
             return response()->json([
-                'message' => 'Erro ao salvar complemento',
+                'message' => 'Erro ao salvar opção',
             ], 404);
-
-        foreach($request->opcoes as $op){
-            //return ['op' => $op['nome']];
-            $opcao = Opcao::create([
-                'complemento_id' => $complemento->id,
-                'nome' => $op['nome'],
-                'preco' => $op['preco'],
-            ]);
-        }
         
         return ['url' => route('items_index', compact('estabelecimento'))];
     }
@@ -74,10 +63,10 @@ class ComplementoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Complemento  $complemento
+     * @param  \App\Opcao  $opcao
      * @return \Illuminate\Http\Response
      */
-    public function show(Complemento $complemento)
+    public function show(Opcao $opcao)
     {
         //
     }
@@ -85,10 +74,10 @@ class ComplementoController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Complemento  $complemento
+     * @param  \App\Opcao  $opcao
      * @return \Illuminate\Http\Response
      */
-    public function edit(Complemento $complemento)
+    public function edit(Opcao $opcao)
     {
         //
     }
@@ -97,10 +86,10 @@ class ComplementoController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Complemento  $complemento
+     * @param  \App\Opcao  $opcao
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Complemento $complemento)
+    public function update(Request $request, Opcao $opcao)
     {
         //
     }
@@ -108,18 +97,14 @@ class ComplementoController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Complemento  $complemento
+     * @param  \App\Opcao  $opcao
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Estabelecimento $estabelecimento ,Complemento $complemento)
+    public function destroy(Estabelecimento $estabelecimento, Opcao $opcao)
     {
         foreach (Auth::user()->estabelecimentos as $user_estabelecimento)
-            if ($user_estabelecimento->id == $estabelecimento->id){    
-                foreach ($complemento->opcaos as $opcao)
-                    $opcao->delete();
-                    
-                $complemento->delete();
-            }
+            if ($user_estabelecimento->id == $estabelecimento->id)
+                $opcao->delete();
 
         return redirect(route('items_index', compact('estabelecimento')));
     }

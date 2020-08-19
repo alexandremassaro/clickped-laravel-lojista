@@ -1,41 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Estabelecimento;
+use App\Http\Controllers\Controller;
 use App\Item;
+use App\Selecao;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ItemController extends Controller
 {
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-    
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Estabelecimento $estabelecimento)
-    {
-        return view('estabelecimento.item.index', compact(['estabelecimento']));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function index()
     {
         //
     }
@@ -67,7 +47,7 @@ class ItemController extends Controller
                 'message' => 'Erro ao salvar ítem',
             ], 404);
         
-        return ['url' => route('items_index', compact('estabelecimento'))];
+        return response()->json(['item' => $item]);
     }
 
     /**
@@ -77,17 +57,6 @@ class ItemController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Item $item)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Item  $item
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Item $item)
     {
         //
     }
@@ -110,21 +79,32 @@ class ItemController extends Controller
      * @param  \App\Item  $item
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Estabelecimento $estabelecimento, Item $item)
+    public function destroy(Item $item)
     {
+        //
+    }
 
-        foreach (Auth::user()->estabelecimentos as $user_estabelecimento)
-            if ($user_estabelecimento->id == $estabelecimento->id){
-                foreach ($item->selecaos as $selecao)
-                    $selecao->delete();
-                foreach ($item->complementos as $complemento){
-                    foreach ($complemento->opcaos as $opcao)
-                        $opcao->delete();
-                    $complemento->delete();
-                }
-                $item->delete();
-            }
+    public function getItemsArray(Request $request) {
 
-        return redirect(route('items_index', compact('estabelecimento')));
+        $estabelecimento = Estabelecimento::where(['slug' => $request->estabelecimento])->first();
+        
+        if(!$estabelecimento)
+            return response()->json([
+                'message' => 'Registro não encontrado',
+            ], 404);
+
+        $items = $estabelecimento->items->where('status', 0);
+
+        $resposta = [];
+
+        foreach($items as $it){
+            $selecao = Selecao::where(['item_id' => $it->id, 'cardapio_id' => $request->cardapio, 'categoria_id' => $request->categoria]);
+            if($selecao == null || $selecao->count() == 0)
+                array_push($resposta, ['id' => $it->id, 'nome' => $it->nome]);
+            $selecao = null;
+        }
+
+        return response()->json(['items' => $resposta]);
+        
     }
 }

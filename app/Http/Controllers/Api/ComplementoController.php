@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Complemento;
 use App\Estabelecimento;
+use App\Http\Controllers\Controller;
 use App\Item;
 use App\Opcao;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ComplementoController extends Controller
 {
@@ -17,16 +17,6 @@ class ComplementoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
     {
         //
     }
@@ -68,7 +58,7 @@ class ComplementoController extends Controller
             ]);
         }
         
-        return ['url' => route('items_index', compact('estabelecimento'))];
+        return response()->json(['complemento' => $complemento]);
     }
 
     /**
@@ -78,17 +68,6 @@ class ComplementoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Complemento $complemento)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Complemento  $complemento
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Complemento $complemento)
     {
         //
     }
@@ -111,16 +90,8 @@ class ComplementoController extends Controller
      * @param  \App\Complemento  $complemento
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Estabelecimento $estabelecimento ,Complemento $complemento)
+    public function destroy(Complemento $complemento)
     {
-        foreach (Auth::user()->estabelecimentos as $user_estabelecimento)
-            if ($user_estabelecimento->id == $estabelecimento->id){    
-                foreach ($complemento->opcaos as $opcao)
-                    $opcao->delete();
-                    
-                $complemento->delete();
-            }
-
-        return redirect(route('items_index', compact('estabelecimento')));
+        //
     }
 }

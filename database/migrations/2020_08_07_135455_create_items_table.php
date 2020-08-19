@@ -16,7 +16,7 @@ class CreateItemsTable extends Migration
         Schema::create('items', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
-            $table->longText('descricao');
+            $table->longText('descricao')->nullable();
             $table->double('preco', 8, 2);
             $table->string('image')->nullable();
             $table->integer('status')->default(0);
