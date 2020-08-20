@@ -35,3 +35,4 @@ Route::get('/categorias/autocomplete', 'Api\CategoriaController@getCategoriasArr
 Route::get('/items/autocomplete', 'Api\ItemController@getItemsArray')->name('getItemsArray');
 
 Route::get('/pedidos/recentes', 'Api\PedidoController@getRecentes')->name('getPedidosRecentes');
+Route::post('/pedido/status', 'Api\PedidoController@changeStatus')->name('changeStatusPedido');

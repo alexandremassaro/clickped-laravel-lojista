@@ -65,6 +65,22 @@ class PedidoController extends Controller
         //
     }
 
+    public function changeStatus(Request $request) {
+        $estabelecimento = Estabelecimento::where(['slug' => $request->estabelecimento])->first();
+        $pedido = Pedido::where('id', $request->pedido)->first();
+
+        if(!$estabelecimento || !$pedido)
+            return response()->json([
+                'message' => 'Registro não encontrado',
+            ], 404);
+
+        $pedido->status = $request->status;
+        $pedido->save();
+
+        return response()->json(['pedido' => $pedido]);
+
+    }
+
     public function getRecentes(Request $request) {
 
         $pedidos = [];
@@ -75,7 +91,15 @@ class PedidoController extends Controller
                 'message' => 'Registro não encontrado',
             ], 404);
 
-        foreach($estabelecimento->pedidos as $pedido) {
+        if ($request->selectedStatus == 'All'){
+            $pedidosAll = $estabelecimento->pedidos->sortByDesc('created_at')->take(10);
+        }
+        else{
+            $pedidosAll = $estabelecimento->pedidos->where('status', $request->selectedStatus)->sortByDesc('created_at')->take(10);
+        }
+
+
+        foreach($pedidosAll as $pedido) {
             $items = [];
             foreach($pedido->itemPedidos as $item){
                 array_push($items, ['id' => $item->id, 'nome' => $item->nome, 'preco' => $item->preco, 'quantidade' => $item->quantidade, 'observacao' => $item->observacao]);
@@ -86,7 +110,7 @@ class PedidoController extends Controller
                 array_push($opcaos, ['id' => $opcao->id, 'nome' => $opcao->nome, 'preco' => $opcao->preco]);
             }
 
-            array_push($pedidos, ['id' => $pedido->id, 'status' => $pedido->status, 'mesa' => $pedido->comanda->mesa->nome, 'cliente' => $pedido->comanda->user->name, 'items' => $items, 'opcaos' => $opcaos]);
+            array_push($pedidos, ['id' => $pedido->id, 'status' => $pedido->status, 'statusOptions' => $pedido->statusOptions(),'mesa' => $pedido->comanda->mesa->nome, 'cliente' => $pedido->comanda->user->name, 'items' => $items, 'opcaos' => $opcaos]);
         }
 
         return response()->json(['pedidos' => $pedidos]);

@@ -2664,6 +2664,55 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['estabelecimento'],
   data: function data() {
@@ -2671,12 +2720,19 @@ __webpack_require__.r(__webpack_exports__);
       pedidos: [],
       loading: true,
       errorMsg: '',
-      selectedPedido: {}
+      selectedPedido: {},
+      selectedStatus: 'All'
     };
   },
   mounted: function mounted() {
     this.loading = true;
     this.getPedidos();
+    this.timerReloadPedidos();
+  },
+  watch: {
+    selectedStatus: function selectedStatus() {
+      this.getPedidos();
+    }
   },
   methods: {
     alerta: function alerta(texto) {
@@ -2689,24 +2745,54 @@ __webpack_require__.r(__webpack_exports__);
         currency: 'BRL'
       });
     },
-    getPedidos: function getPedidos() {
+    timerReloadPedidos: function timerReloadPedidos() {
       var _this = this;
 
+      setTimeout(function () {
+        _this.getPedidos();
+
+        _this.timerReloadPedidos();
+      }, 60000);
+    },
+    getPedidos: function getPedidos() {
+      var _this2 = this;
+
+      //setTimeout(() => {
       axios.get('/api/pedidos/recentes', {
         params: {
-          estabelecimento: this.estabelecimento
+          estabelecimento: this.estabelecimento,
+          selectedStatus: this.selectedStatus
         }
       }).then(function (response) {
-        _this.pedidos = response.data.pedidos;
-        _this.loading = false;
+        _this2.pedidos = response.data.pedidos; //this.pedidos = response.data;
+        //console.log(this.pedidos);
+
+        _this2.loading = false;
       })["catch"](function (error) {
         //console.log(error.response.data.message);
         //this.item.nome = error.response.data.message;
-        _this.loading = false;
+        console.log(error.response.data.message);
+        _this2.loading = false;
+      }); //},2000);
+    },
+    changeStatus: function changeStatus(pedido_id, status) {
+      var _this3 = this;
+
+      axios.post('/api/pedido/status', {
+        estabelecimento: this.estabelecimento,
+        pedido: pedido_id,
+        status: status
+      }).then(function (response) {
+        var resposta = response.data.pedido;
+
+        _this3.getPedidos();
+
+        $('#pedidoModal').modal('hide');
+      })["catch"](function (error) {
+        console.log(error.response.data.message);
+
+        _this3.getPedidos();
       });
-      setTimeout(function () {
-        _this.getPedidos();
-      }, 60000);
     }
   }
 });
@@ -40268,17 +40354,75 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("div", { staticClass: "card" }, [
-      _vm._m(0),
+      _c("div", { staticClass: "card-header navbar" }, [
+        _c("div", { staticClass: "row w-100 justify-content-between" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-md-4" }, [
+            _c(
+              "select",
+              {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.selectedStatus,
+                    expression: "selectedStatus"
+                  }
+                ],
+                staticClass: "form-control form-control-sm",
+                on: {
+                  change: function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.selectedStatus = $event.target.multiple
+                      ? $$selectedVal
+                      : $$selectedVal[0]
+                  }
+                }
+              },
+              [
+                _c("option", { attrs: { value: "All" } }, [
+                  _vm._v("Mostrar todos")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "Pendente" } }, [
+                  _vm._v("Pendentes")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "Preparando" } }, [
+                  _vm._v("Preparando")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "Entregando" } }, [
+                  _vm._v("Entregando")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "Finalizado" } }, [
+                  _vm._v("Finalizados")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "Cancelado" } }, [
+                  _vm._v("Cancelados")
+                ])
+              ]
+            )
+          ])
+        ])
+      ]),
       _vm._v(" "),
       _c("div", { staticClass: "card-body" }, [
         _vm.loading
           ? _c("div", { staticClass: "text-center" }, [
               _c("img", { attrs: { src: "/images/loading.gif" } })
             ])
-          : _vm._e(),
-        _vm._v(" "),
-        !_vm.loading
-          ? _c("div", { staticClass: "row justify-content-center" }, [
+          : _c("div", { staticClass: "row justify-content-center" }, [
               _c("div", { staticClass: "col" }, [
                 _c("table", { staticClass: "table table-hover" }, [
                   _vm._m(1),
@@ -40290,10 +40434,6 @@ var render = function() {
                         "tr",
                         {
                           key: pedido.id,
-                          attrs: {
-                            "data-toggle": "modal",
-                            "data-target": "#pedidoModal"
-                          },
                           on: {
                             click: function($event) {
                               _vm.selectedPedido = pedido
@@ -40303,24 +40443,49 @@ var render = function() {
                         [
                           _c("th", {
                             staticClass: "text-center",
-                            attrs: { scope: "row" },
+                            staticStyle: { cursor: "pointer" },
+                            attrs: {
+                              scope: "row",
+                              "data-toggle": "modal",
+                              "data-target": "#pedidoModal"
+                            },
                             domProps: { textContent: _vm._s(pedido.id) }
                           }),
                           _vm._v(" "),
                           _c("td", {
                             staticClass: "text-center",
+                            staticStyle: { cursor: "pointer" },
+                            attrs: {
+                              "data-toggle": "modal",
+                              "data-target": "#pedidoModal"
+                            },
                             domProps: { textContent: _vm._s(pedido.status) }
                           }),
                           _vm._v(" "),
                           _c("td", {
+                            staticStyle: { cursor: "pointer" },
+                            attrs: {
+                              "data-toggle": "modal",
+                              "data-target": "#pedidoModal"
+                            },
                             domProps: { textContent: _vm._s(pedido.mesa) }
                           }),
                           _vm._v(" "),
                           _c("td", {
+                            staticStyle: { cursor: "pointer" },
+                            attrs: {
+                              "data-toggle": "modal",
+                              "data-target": "#pedidoModal"
+                            },
                             domProps: { textContent: _vm._s(pedido.cliente) }
                           }),
                           _vm._v(" "),
                           _c("td", {
+                            staticStyle: { cursor: "pointer" },
+                            attrs: {
+                              "data-toggle": "modal",
+                              "data-target": "#pedidoModal"
+                            },
                             domProps: {
                               textContent: _vm._s(pedido.items[0].nome)
                             }
@@ -40330,6 +40495,11 @@ var render = function() {
                             "td",
                             {
                               staticClass: "text-center",
+                              staticStyle: { cursor: "pointer" },
+                              attrs: {
+                                "data-toggle": "modal",
+                                "data-target": "#pedidoModal"
+                              },
                               domProps: {
                                 textContent: _vm._s(pedido.items[0].quantidade)
                               }
@@ -40346,7 +40516,6 @@ var render = function() {
                 ])
               ])
             ])
-          : _vm._e()
       ])
     ]),
     _vm._v(" "),
@@ -40371,83 +40540,214 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(3),
-              _vm._v(" "),
-              _c("div", { staticClass: "modal-body" }, [
-                _c("p", [
-                  _vm._v(
-                    "Código do pedido: " +
-                      _vm._s(_vm.selectedPedido.id) +
-                      " - Local: " +
-                      _vm._s(_vm.selectedPedido.mesa)
-                  )
-                ]),
-                _vm._v(" "),
-                _c("p", [
-                  _vm._v("Cliente: " + _vm._s(_vm.selectedPedido.cliente))
-                ]),
-                _vm._v(" "),
-                _c("p", [
-                  _vm._v("Status: " + _vm._s(_vm.selectedPedido.status))
-                ]),
-                _vm._v(" "),
-                _c("p", [_vm._v("Ítens pedidos: ")]),
-                _vm._v(" "),
+              _c("div", { staticClass: "modal-header" }, [
                 _c(
-                  "ul",
-                  _vm._l(_vm.selectedPedido.items, function(item) {
-                    return _c("li", { key: item.id }, [
-                      _vm._v(
-                        "\r\n                        " +
-                          _vm._s(item.quantidade) +
-                          "x " +
-                          _vm._s(item.nome) +
-                          " - " +
-                          _vm._s(_vm.getCurrencyString(item.preco)) +
-                          " "
-                      ),
-                      _c("br"),
-                      _vm._v(" "),
-                      item.observacao
-                        ? _c("div", [
-                            _vm._v(
-                              "Observação: " + _vm._s(item.observacao) + " "
-                            ),
-                            _c("br")
-                          ])
-                        : _vm._e(),
-                      _vm._v(" "),
-                      item.opcaos
-                        ? _c("div", [
-                            _vm._v(
-                              "\r\n                            Opcionais:\r\n                            "
-                            ),
-                            _c(
-                              "ul",
-                              _vm._l(item.opcaos, function(opcao) {
-                                return _c("li", { key: opcao.id }, [
-                                  _vm._v(
-                                    "\r\n                                    " +
-                                      _vm._s(opcao.nome) +
-                                      " - " +
-                                      _vm._s(
-                                        _vm.getCurrencyString(opcao.preco)
-                                      ) +
-                                      "\r\n                                "
-                                  )
-                                ])
-                              }),
-                              0
-                            )
-                          ])
-                        : _vm._e()
-                    ])
-                  }),
-                  0
-                )
+                  "h5",
+                  {
+                    staticClass: "modal-title",
+                    attrs: { id: "pedidoModalLabel" }
+                  },
+                  [
+                    _vm._v(
+                      _vm._s(_vm.selectedPedido.cliente) +
+                        " - Local: " +
+                        _vm._s(_vm.selectedPedido.mesa)
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _vm._m(3)
               ]),
               _vm._v(" "),
-              _vm._m(4)
+              _c("div", { staticClass: "modal-body" }, [
+                _c("dl", { staticClass: "row" }, [
+                  _c("dt", { staticClass: "col-2" }, [_vm._v("Código:")]),
+                  _vm._v(" "),
+                  _c("dd", { staticClass: "col-10" }, [
+                    _vm._v(_vm._s(_vm.selectedPedido.id))
+                  ]),
+                  _vm._v(" "),
+                  _c("dt", { staticClass: "col-2" }, [_vm._v("Local:")]),
+                  _vm._v(" "),
+                  _c("dd", { staticClass: "col-10" }, [
+                    _vm._v(_vm._s(_vm.selectedPedido.mesa))
+                  ]),
+                  _vm._v(" "),
+                  _c("dt", { staticClass: "col-2" }, [_vm._v("Cliente:")]),
+                  _vm._v(" "),
+                  _c("dd", { staticClass: "col-10" }, [
+                    _vm._v(_vm._s(_vm.selectedPedido.cliente))
+                  ]),
+                  _vm._v(" "),
+                  _c("dt", { staticClass: "col-2" }, [_vm._v("Status:")]),
+                  _vm._v(" "),
+                  _c("dd", { staticClass: "col-10" }, [
+                    _c(
+                      "select",
+                      {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.selectedPedido.status,
+                            expression: "selectedPedido.status"
+                          }
+                        ],
+                        staticClass: "form-control form-control-sm",
+                        on: {
+                          change: function($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function(o) {
+                                return o.selected
+                              })
+                              .map(function(o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.$set(
+                              _vm.selectedPedido,
+                              "status",
+                              $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            )
+                          }
+                        }
+                      },
+                      _vm._l(_vm.selectedPedido.statusOptions, function(
+                        key,
+                        val
+                      ) {
+                        return _c(
+                          "option",
+                          { key: val, domProps: { value: val } },
+                          [_vm._v(" " + _vm._s(key) + " ")]
+                        )
+                      }),
+                      0
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "card" }, [
+                  _vm._m(4),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "card-body" },
+                    [
+                      _c("table", { staticClass: "table mb-0 pb-0" }, [
+                        _vm._m(5),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          _vm._l(_vm.selectedPedido.items, function(item) {
+                            return _c(
+                              "tr",
+                              { key: item.id, staticClass: " mb-0 pb-0" },
+                              [
+                                _c("th", { attrs: { scope: "row" } }, [
+                                  _vm._v(_vm._s(item.quantidade))
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [_vm._v(_vm._s(item.nome))]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(
+                                    _vm._s(_vm.getCurrencyString(item.preco))
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(
+                                    _vm._s(
+                                      _vm.getCurrencyString(
+                                        item.preco * item.quantidade
+                                      )
+                                    )
+                                  )
+                                ])
+                              ]
+                            )
+                          }),
+                          0
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _vm._l(_vm.selectedPedido.items, function(item) {
+                        return _c("div", { key: item.id }, [
+                          item.opcaos
+                            ? _c(
+                                "div",
+                                _vm._l(item.opcaos, function(opcao) {
+                                  return _c(
+                                    "div",
+                                    { key: opcao.id, staticClass: "row" },
+                                    [
+                                      _c("div", { staticClass: "col" }, [
+                                        _vm._v(_vm._s(opcao.nome))
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("div", { staticClass: "col" }, [
+                                        _vm._v(
+                                          _vm._s(
+                                            _vm.getCurrencyString(opcao.preco)
+                                          )
+                                        )
+                                      ])
+                                    ]
+                                  )
+                                }),
+                                0
+                              )
+                            : _vm._e(),
+                          _vm._v(" "),
+                          item.observacao
+                            ? _c("dl", { staticClass: "row mx-3" }, [
+                                _c("dt", { staticClass: "col-2" }, [
+                                  _vm._v("Obs:")
+                                ]),
+                                _vm._v(" "),
+                                _c("dd", { staticClass: "col" }, [
+                                  _vm._v(_vm._s(item.observacao))
+                                ])
+                              ])
+                            : _vm._e()
+                        ])
+                      })
+                    ],
+                    2
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary",
+                    attrs: { type: "button", "data-dismiss": "modal" }
+                  },
+                  [_vm._v("Close")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        return _vm.changeStatus(
+                          _vm.selectedPedido.id,
+                          _vm.selectedPedido.status
+                        )
+                      }
+                    }
+                  },
+                  [_vm._v("Save changes")]
+                )
+              ])
             ])
           ]
         )
@@ -40460,29 +40760,11 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header navbar" }, [
-      _c("div", { staticClass: "row w-100 justify-content-between" }, [
-        _c("div", { staticClass: "col-md-5" }, [
-          _c("div", { staticClass: "h4 p-0 m-0" }, [
-            _vm._v(
-              "\r\n                        Pedidos Recentes\r\n                    "
-            )
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-md-4" }, [
-          _c("select", { staticClass: "form-control form-control-sm" }, [
-            _c("option", [_vm._v("Mostrar todos")]),
-            _vm._v(" "),
-            _c("option", [_vm._v("Pendentes")]),
-            _vm._v(" "),
-            _c("option", [_vm._v("Preparando")]),
-            _vm._v(" "),
-            _c("option", [_vm._v("Entregando")]),
-            _vm._v(" "),
-            _c("option", [_vm._v("Finalizados")])
-          ])
-        ])
+    return _c("div", { staticClass: "col-md-5" }, [
+      _c("div", { staticClass: "h4 p-0 m-0" }, [
+        _vm._v(
+          "\r\n                        Pedidos Recentes\r\n                    "
+        )
       ])
     ])
   },
@@ -40525,7 +40807,8 @@ var staticRenderFns = [
         "button",
         {
           staticClass: "btn btn-outline-dark py-0 px-1",
-          staticStyle: { width: "1.5rem", height: "1.5rem" }
+          staticStyle: { width: "1.5rem", height: "1.5rem" },
+          attrs: { title: "Imprimir Pedido" }
         },
         [_c("i", { staticClass: "fas fa-print" })]
       )
@@ -40535,24 +40818,47 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
       _c(
-        "h5",
-        { staticClass: "modal-title", attrs: { id: "pedidoModalLabel" } },
-        [_vm._v("Modal title")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: {
-            type: "button",
-            "data-dismiss": "modal",
-            "aria-label": "Close"
-          }
-        },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+        "div",
+        { staticClass: "row w-100 justify-content-between align-middle" },
+        [
+          _c("div", { staticClass: "col align-middle my-0 py-0" }, [
+            _c("div", { staticClass: "h4 mt-2" }, [
+              _vm._v(
+                "\r\n                                    Ítens pedidos:\r\n                                "
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-1 my-0 py-0" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-outline-dark",
+                attrs: { title: "Imprimir Pedido" }
+              },
+              [_c("i", { staticClass: "fas fa-print" })]
+            )
+          ])
+        ]
       )
     ])
   },
@@ -40560,21 +40866,16 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-footer" }, [
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-secondary",
-          attrs: { type: "button", "data-dismiss": "modal" }
-        },
-        [_vm._v("Close")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        { staticClass: "btn btn-primary", attrs: { type: "button" } },
-        [_vm._v("Save changes")]
-      )
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Qtde")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Ítem")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Preço Un.")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Total")])
+      ])
     ])
   }
 ]
