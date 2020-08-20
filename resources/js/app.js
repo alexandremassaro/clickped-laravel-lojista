@@ -26,6 +26,7 @@ Vue.component('item-cadastro-component', require('./components/item/ItemCadastro
 Vue.component('auto-complete-categoria', require('./components/cardapio/AutoCompleteCategoria.vue').default);
 Vue.component('auto-complete-item', require('./components/cardapio/AutoCompleteItem.vue').default);
 Vue.component('item-select-component', require('./components/cardapio/ItemSelect.vue').default);
+Vue.component('pedidos-recentes-component', require('./components/pedido/PedidosRecentes.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

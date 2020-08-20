@@ -28,6 +28,10 @@ class Estabelecimento extends Model
         return $this->hasMany(Item::class);
     }
 
+    public function pedidos() {
+        return $this->hasMany(Pedido::class);
+    }
+
     public function attachUser($user) {
         $this->users()->syncWithoutDetaching([$user]);
     }

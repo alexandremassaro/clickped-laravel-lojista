@@ -33,3 +33,5 @@ Route::post('/complemento', 'Api\ComplementoController@store')->name('complement
 Route::post('/opcao', 'Api\OpcaoController@store')->name('opcao_store');
 Route::get('/categorias/autocomplete', 'Api\CategoriaController@getCategoriasArray')->name('getCategoriasArray');
 Route::get('/items/autocomplete', 'Api\ItemController@getItemsArray')->name('getItemsArray');
+
+Route::get('/pedidos/recentes', 'Api\PedidoController@getRecentes')->name('getPedidosRecentes');

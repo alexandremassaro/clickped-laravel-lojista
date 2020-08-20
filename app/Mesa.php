@@ -11,4 +11,8 @@ class Mesa extends Model
     public function estabelecimento() {
         return $this->belongsTo(Estabelecimento::class);
     }
+
+    public function comandas() {
+        return $this->hasMany(Comanda::class);
+    }
 }
