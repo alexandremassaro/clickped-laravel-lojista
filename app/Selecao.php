@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Selecao extends Model
 {
     protected $guarded = [];
+
+    protected $hidden = [
+        'created_at', 'updated_at'
+    ];
     
     public function categoria() {
         return $this->belongsTo(Categoria::class);

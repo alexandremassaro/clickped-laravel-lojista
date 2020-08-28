@@ -19,12 +19,15 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::post('auth/login', 'Api\AuthController@login');
+Route::post('auth/register', 'Api\AuthController@register');
+Route::post('auth/refresh', 'Api\AuthController@refresh');
 
 Route::group(['middleware' => ['apiJwt']], function () {
     Route::get('users', 'Api\UserController@index');
     Route::post('auth/logout', 'Api\AuthController@logout');
-    Route::post('auth/refresh', 'Api\AuthController@refresh');
     Route::post('auth/me', 'Api\AuthController@me');
+    Route::get('cardapio', 'Api\CardapioController@show');
+    Route::get('mesa/{mesa}', 'Api\EstabelecimentoController@checkIn');
 });
 
 

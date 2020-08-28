@@ -8,6 +8,10 @@ class Item extends Model
 {
     protected $guarded = [];
 
+    protected $hidden = [
+        'estabelecimento_id', 'created_at', 'updated_at'
+    ];
+
     public function selecaos() {
         return $this->hasMany(Selecao::class);
     }

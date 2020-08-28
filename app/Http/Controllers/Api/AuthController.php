@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -21,6 +24,31 @@ class AuthController extends Controller
         }
 
         return $this->respondWithToken($token);
+    }
+
+    public function register(Request $request) 
+    {   
+        $data = Validator::make($request->all(),[
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'cpf' => ['required', 'string', 'min:11', 'max:11', 'unique:users'],
+        ]);
+
+        if ($data->fails())
+            return response()->json($data->errors(), 400);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'cpf' => $request->cpf,
+        ]);;
+
+        if ($user)
+            return response()->json($user);
+        else 
+            return response()->json(['error' => 'Erro ao cadastrar'], 500);
     }
 
     /**

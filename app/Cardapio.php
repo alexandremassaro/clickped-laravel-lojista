@@ -8,6 +8,10 @@ class Cardapio extends Model
 {
     protected $guarded = [];
 
+    protected $hidden = [
+        'estabelecimento_id', 'created_at', 'updated_at'
+    ];
+
     public function estabelecimento() {
         return $this->belongsTo(Estabelecimento::class);
     }
